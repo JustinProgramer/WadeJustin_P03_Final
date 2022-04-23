@@ -38,9 +38,18 @@ public class AudioManager : MonoBehaviour
             return;
         s.source.Play();
     }
+
+    public void StopSong(string name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+        if (s == null)
+            return;
+        s.source.Stop();
+    }
     // Play background music through the music source.
     void Start()
     {
         PlaySong("Theme");
+        PlaySong("Music");
     }
 }

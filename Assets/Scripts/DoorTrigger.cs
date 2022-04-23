@@ -4,64 +4,55 @@ using UnityEngine;
 
 public class DoorTrigger : MonoBehaviour
 {
-    [SerializeField] GameObject door;
-    [SerializeField] float openDuration = 3;
-    Collider colliderToDeactivate = null;
+    [SerializeField] GameObject doorR;
+    [SerializeField] GameObject doorL;
+    [SerializeField] float openDuration = 5;
+    [SerializeField] GameObject blueSign;
+    [SerializeField] GameObject orangeSign;
+    [SerializeField] GameObject blueLine;
+    [SerializeField] GameObject orangeLine;
+    //Collider colliderToDeactivate = null;
     bool isOpened = false;
 
-    private void Awake()
+    private void Start()
     {
-        colliderToDeactivate = GetComponent<Collider>();
+        blueSign.SetActive(true);
+        orangeSign.SetActive(false);
+        blueLine.SetActive(true);
+        orangeLine.SetActive(false);
     }
-
     void OnTriggerEnter(Collider col)
     {
+        FindObjectOfType<AudioManager>().PlaySong("Buzz");
+
         if (isOpened == false)
         {
-            StartCoroutine(DoorOpen());
+            isOpened = true;
+            FindObjectOfType<AudioManager>().StopSong("Door Close");
+            Debug.Log("Open Open!");
+            doorR.transform.position += new Vector3(0, 0, .832f);
+            doorL.transform.position += new Vector3(0, 0, -.832f);
+            blueSign.SetActive(false);
+            orangeSign.SetActive(true);
+            blueLine.SetActive(false);
+            orangeLine.SetActive(true);
+
+            if (col.CompareTag("Cube"))
+            {
+                FindObjectOfType<AudioManager>().PlaySong("Robot Voice");
+            }
         }
     }
-    IEnumerator DoorOpen()
+    void OnTriggerExit(Collider col)
     {
-        // set boolean for detecting lockout
-        isOpened = true;
-
-        ActivateDoor();
-        // simulate this object being disabled. We don't really want to disable it
-        // because we still need script behavior to continue functioning
-        DisableObject();
-
-        // wait for the required duration
-        yield return new WaitForSeconds(openDuration);
-        //reset
-        DeactivateDoor();
-        EnableObject();
-
-        // set boolean to release lockout
-        isOpened = false;
-    }
-    void ActivateDoor()
-    {
-        // open door
-        Debug.Log("Open Door!");
-        door.transform.position += new Vector3(0, 2.4f, 0);
-    }
-    void DeactivateDoor()
-    {
-        // close door
         Debug.Log("Door Close!");
-        door.transform.position += new Vector3(0, -2.4f, 0);
-    }
-    void DisableObject()
-    {
-        // disable collider, so it can't be retriggered
-        colliderToDeactivate.enabled = false;
-        // disable visuals, to simulate deactivated
-    }
-    void EnableObject()
-    {
-        // enable collider, so it can be retriggered
-        colliderToDeactivate.enabled = true;
-        // enable visuals again, to draw player attention
+        doorR.transform.position += new Vector3(0, 0, -.832f);
+        doorL.transform.position += new Vector3(0, 0, .832f);
+        FindObjectOfType<AudioManager>().PlaySong("Door Close");
+        isOpened = false;
+        blueSign.SetActive(true);
+        orangeSign.SetActive(false);
+        blueLine.SetActive(true);
+        orangeLine.SetActive(false);
     }
 }
