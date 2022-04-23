@@ -18,6 +18,10 @@ public class LevelController : MonoBehaviour
                 Pause();
             }
         }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            ExitGame();
+        }
     }
     public void Pause()
     {
